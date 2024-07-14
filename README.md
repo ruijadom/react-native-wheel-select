@@ -10,15 +10,23 @@ npm install react-native-wheel-select
 
 ## Usage
 
-
 ```js
-import { multiply } from 'react-native-wheel-select';
+import { WheelPicker } from 'react-native-wheel-select';
 
 // ...
 
-const result = await multiply(3, 7);
+<WheelPicker
+  key={data.join(',')}
+  options={data}
+  selectedIndex={selected}
+  onChange={(value: React.SetStateAction<number>) => setSelected(value)}
+  itemHeight={42}
+  visibleRest={1}
+  renderItem={(item: Item) => {
+    return <Text>{item?.value}</Text>;
+  }}
+/>
 ```
-
 
 ## Contributing
 
@@ -27,7 +35,3 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)

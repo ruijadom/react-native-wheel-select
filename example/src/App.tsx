@@ -1,17 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-wheel-select';
+import { WheelPicker } from 'react-native-wheel-select';
+
+interface Item {
+  value: number;
+  label: string;
+}
+
+const data = [...Array(100).keys()].map((index) => ({
+  value: index,
+  label: index.toString(),
+}));
 
 export default function App() {
-  const [result, setResult] = useState<number | undefined>();
-
-  useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+  const [selected, setSelected] = useState(data[0]?.value || 0);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <WheelPicker
+        key={data.join(',')}
+        options={data}
+        selectedIndex={selected}
+        onChange={(value: React.SetStateAction<number>) => setSelected(value)}
+        itemHeight={42}
+        visibleRest={1}
+        renderItem={(item: Item) => {
+          return <Text>{item?.value}</Text>;
+        }}
+      />
     </View>
   );
 }
@@ -19,12 +35,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+    alignItems: 'center',
   },
 });
