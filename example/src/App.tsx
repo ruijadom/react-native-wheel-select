@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { WheelPicker } from 'react-native-wheel-select';
+import { Wheel } from 'react-native-wheel-select';
 
 interface Item {
   value: number;
@@ -17,7 +17,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <WheelPicker
+      <Wheel
         key={data.join(',')}
         options={data}
         selectedIndex={selected}

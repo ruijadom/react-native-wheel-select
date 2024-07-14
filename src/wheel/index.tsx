@@ -13,7 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import WheelPickerItem from '../wheel-item';
+import WheelItem from '../wheel-item';
 import styles from './index.styles';
 
 const computeFunctions = {
@@ -22,7 +22,7 @@ const computeFunctions = {
   computeScale: (x: number) => 1.0 ** x,
 };
 
-export const WheelPicker = ({
+export const Wheel = ({
   computeOpacity = computeFunctions.computeOpacity,
   computeRotation = computeFunctions.computeRotation,
   computeScale = computeFunctions.computeScale,
@@ -132,7 +132,7 @@ export const WheelPicker = ({
         data={customOptions}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ index, item: option }) => (
-          <WheelPickerItem
+          <WheelItem
             key={`option-${index}`}
             index={index}
             style={itemStyle}
@@ -144,11 +144,11 @@ export const WheelPicker = ({
             visibleItemsCount={visibleItemsCount}
           >
             {renderItem(option, index)}
-          </WheelPickerItem>
+          </WheelItem>
         )}
       />
     </View>
   );
 };
 
-export default React.memo(WheelPicker);
+export default React.memo(Wheel);

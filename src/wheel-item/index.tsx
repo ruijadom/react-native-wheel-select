@@ -3,7 +3,7 @@ import type { ItemProps } from './index.types';
 import { memo } from 'react';
 import styles from './index.styles';
 
-const WheelPickerItem = ({
+const WheelItem = ({
   children,
   currentScrollIndex,
   height,
@@ -116,4 +116,4 @@ const WheelPickerItem = ({
   );
 };
 
-export default memo(WheelPickerItem);
+export default memo(WheelItem);

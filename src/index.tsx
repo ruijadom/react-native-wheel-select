@@ -1,1 +1,1 @@
-export { WheelPicker } from './wheel';
+export { Wheel } from './wheel';

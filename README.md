@@ -11,12 +11,16 @@ npm install react-native-wheel-select
 ## Usage
 
 ```js
-import { WheelPicker } from 'react-native-wheel-select';
+import { Wheel } from 'react-native-wheel-select';
 
-// ...
+const data = [...Array(100).keys()].map((index) => ({
+  value: index,
+  label: index.toString(),
+}));
 
-<WheelPicker
-  key={data.join(',')}
+const [selected, setSelected] = useState(data[0]?.value || 0);
+
+<Wheel
   options={data}
   selectedIndex={selected}
   onChange={(value: React.SetStateAction<number>) => setSelected(value)}
@@ -30,23 +34,23 @@ import { WheelPicker } from 'react-native-wheel-select';
 
 ## Props
 
-The `WheelPicker` component accepts the following props:
+The `Wheel` component accepts the following props:
 
-- **computeOpacity**: Function to determine the opacity of items. Default is `(x: number) => Math.pow(1 / 3, x)`.
-- **computeRotation**: Function to determine the rotation of items. Default is `(x: number) => 1 - Math.pow(1 / 2, x)`.
-- **computeScale**: Function to determine the scale of items. Default is `(x: number) => 1.0 ** x`.
-- **containerProps**: Additional props for the container. Default is `{}`.
-- **containerStyle**: Style for the container. Default is `{}`.
-- **itemHeight**: Height of each item in the wheel. Default is `40`.
-- **itemSelectedStyle**: Style for the selected indicator. Default is `{}`.
-- **itemStyle**: Style for each item. Default is `{}`.
-- **listProps**: Additional props for the FlatList. Default is `{}`.
+- **computeOpacity**: Function to determine the opacity of items.
+- **computeRotation**: Function to determine the rotation of items.
+- **computeScale**: Function to determine the scale of items.
+- **containerProps**: Additional props for the container.
+- **containerStyle**: Style for the container.
+- **itemHeight**: Height of each item in the wheel.
+- **itemSelectedStyle**: Style for the selected indicator.
+- **itemStyle**: Style for each item.
+- **listProps**: Additional props for the FlatList.
 - **onChange**: Callback function called when the selected item changes.
 - **options**: Array of options to be displayed in the wheel.
 - **renderItem**: Function to render each item.
-- **scrollDecelerationRate**: The rate at which the wheel decelerates. Default is `'fast'`.
+- **scrollDecelerationRate**: The rate at which the wheel decelerates.
 - **selectedIndex**: Index of the selected item.
-- **visibleItemsCount**: Number of items visible on either side of the selected item. Default is `2`.
+- **visibleItemsCount**: Number of items visible on either side of the selected item.
 
 ## Contributing
 
