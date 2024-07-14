@@ -16,38 +16,44 @@ import React, {
 import WheelPickerItem from '../wheel-item';
 import styles from './index.styles';
 
+const computeFunctions = {
+  computeOpacity: (x: number) => Math.pow(1 / 3, x),
+  computeRotation: (x: number) => 1 - Math.pow(1 / 2, x),
+  computeScale: (x: number) => 1.0 ** x,
+};
+
 export const WheelPicker = ({
-  computeRotation = (x: number) => 1 - Math.pow(1 / 2, x),
-  computeScale = (x: number) => 1.0 ** x,
+  computeOpacity = computeFunctions.computeOpacity,
+  computeRotation = computeFunctions.computeRotation,
+  computeScale = computeFunctions.computeScale,
   containerProps = {},
   containerStyle = {},
-  decelerationRate = 'fast',
-  flatListProps = {},
   itemHeight = 40,
+  itemSelectedStyle = {},
   itemStyle = {},
+  listProps = {},
   onChange,
-  opacityFunction = (x: number) => Math.pow(1 / 3, x),
   options,
   renderItem,
+  scrollDecelerationRate = 'fast',
   selectedIndex,
-  selectedIndicatorStyle = {},
-  visibleRest = 2,
+  visibleItemsCount = 2,
 }: WheelPickerProps) => {
   const flatListRef = useRef<FlatList>(null);
   const [scrollY] = useState(new Animated.Value(0));
 
   const containerHeight = useMemo(
-    () => (1 + visibleRest * 2) * itemHeight,
-    [visibleRest, itemHeight]
+    () => (1 + visibleItemsCount * 2) * itemHeight,
+    [visibleItemsCount, itemHeight]
   );
   const customOptions = useMemo(() => {
     const array: (any | null)[] = [...options];
-    for (let i = 0; i < visibleRest; i++) {
+    for (let i = 0; i < visibleItemsCount; i++) {
       array.unshift(null);
       array.push(null);
     }
     return array;
-  }, [options, visibleRest]);
+  }, [options, visibleItemsCount]);
 
   const offsets = useMemo(
     () => customOptions.map((_, i) => i * itemHeight),
@@ -55,8 +61,8 @@ export const WheelPicker = ({
   );
 
   const currentScrollIndex = useMemo(
-    () => Animated.add(Animated.divide(scrollY, itemHeight), visibleRest),
-    [visibleRest, scrollY, itemHeight]
+    () => Animated.add(Animated.divide(scrollY, itemHeight), visibleItemsCount),
+    [visibleItemsCount, scrollY, itemHeight]
   );
 
   const handleMomentumScrollEnd = useCallback(
@@ -93,7 +99,7 @@ export const WheelPicker = ({
       <View
         style={[
           styles.selectedIndicator,
-          selectedIndicatorStyle,
+          itemSelectedStyle,
           {
             transform: [{ translateY: -itemHeight / 2 }],
             height: itemHeight,
@@ -101,7 +107,7 @@ export const WheelPicker = ({
         ]}
       />
       <FlatList<string | null>
-        {...flatListProps}
+        {...listProps}
         ref={flatListRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -111,7 +117,7 @@ export const WheelPicker = ({
         }}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         snapToOffsets={offsets}
-        decelerationRate={decelerationRate}
+        decelerationRate={scrollDecelerationRate}
         onLayout={() => {
           flatListRef.current?.scrollToIndex({
             index: selectedIndex,
@@ -134,8 +140,8 @@ export const WheelPicker = ({
             currentScrollIndex={currentScrollIndex}
             computeRotation={computeRotation}
             computeScale={computeScale}
-            opacityFunction={opacityFunction}
-            visibleRest={visibleRest}
+            computeOpacity={computeOpacity}
+            visibleItemsCount={visibleItemsCount}
           >
             {renderItem(option, index)}
           </WheelPickerItem>

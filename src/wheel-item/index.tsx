@@ -8,18 +8,18 @@ const WheelPickerItem = ({
   currentScrollIndex,
   height,
   index,
-  opacityFunction,
+  computeOpacity,
   computeRotation,
   computeScale,
   style,
-  visibleRest,
+  visibleItemsCount,
 }: ItemProps) => {
   const relativeScrollIndex = Animated.subtract(index, currentScrollIndex);
 
   const translateY = relativeScrollIndex.interpolate({
     inputRange: (() => {
       const range = [0];
-      for (let i = 1; i <= visibleRest + 1; i++) {
+      for (let i = 1; i <= visibleItemsCount + 1; i++) {
         range.unshift(-i);
         range.push(i);
       }
@@ -27,7 +27,7 @@ const WheelPickerItem = ({
     })(),
     outputRange: (() => {
       const range = [0];
-      for (let i = 1; i <= visibleRest + 1; i++) {
+      for (let i = 1; i <= visibleItemsCount + 1; i++) {
         let y = (height / 2) * (1 - Math.sin(Math.PI / 2 - computeRotation(i)));
         for (let j = 1; j < i; j++) {
           y += height * (1 - Math.sin(Math.PI / 2 - computeRotation(j)));
@@ -42,7 +42,7 @@ const WheelPickerItem = ({
   const opacity = relativeScrollIndex.interpolate({
     inputRange: (() => {
       const range = [0];
-      for (let i = 1; i <= visibleRest + 1; i++) {
+      for (let i = 1; i <= visibleItemsCount + 1; i++) {
         range.unshift(-i);
         range.push(i);
       }
@@ -50,8 +50,8 @@ const WheelPickerItem = ({
     })(),
     outputRange: (() => {
       const range = [1];
-      for (let x = 1; x <= visibleRest + 1; x++) {
-        const y = opacityFunction(x);
+      for (let x = 1; x <= visibleItemsCount + 1; x++) {
+        const y = computeOpacity(x);
         range.unshift(y);
         range.push(y);
       }
@@ -62,7 +62,7 @@ const WheelPickerItem = ({
   const scale = relativeScrollIndex.interpolate({
     inputRange: (() => {
       const range = [0];
-      for (let i = 1; i <= visibleRest + 1; i++) {
+      for (let i = 1; i <= visibleItemsCount + 1; i++) {
         range.unshift(-i);
         range.push(i);
       }
@@ -70,7 +70,7 @@ const WheelPickerItem = ({
     })(),
     outputRange: (() => {
       const range = [1.0];
-      for (let x = 1; x <= visibleRest + 1; x++) {
+      for (let x = 1; x <= visibleItemsCount + 1; x++) {
         const y = computeScale(x);
         range.unshift(y);
         range.push(y);
@@ -82,7 +82,7 @@ const WheelPickerItem = ({
   const rotateX = relativeScrollIndex.interpolate({
     inputRange: (() => {
       const range = [0];
-      for (let i = 1; i <= visibleRest + 1; i++) {
+      for (let i = 1; i <= visibleItemsCount + 1; i++) {
         range.unshift(-i);
         range.push(i);
       }
@@ -90,7 +90,7 @@ const WheelPickerItem = ({
     })(),
     outputRange: (() => {
       const range = ['0deg'];
-      for (let x = 1; x <= visibleRest + 1; x++) {
+      for (let x = 1; x <= visibleItemsCount + 1; x++) {
         const y = computeRotation(x);
         range.unshift(`${y}deg`);
         range.push(`${y}deg`);

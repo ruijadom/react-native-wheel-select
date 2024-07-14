@@ -23,7 +23,7 @@ export default function App() {
         selectedIndex={selected}
         onChange={(value: React.SetStateAction<number>) => setSelected(value)}
         itemHeight={42}
-        visibleRest={1}
+        visibleItemsCount={1}
         renderItem={(item: Item) => {
           return <Text>{item?.value}</Text>;
         }}

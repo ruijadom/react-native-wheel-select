@@ -5,20 +5,25 @@ import type {
   ViewStyle,
 } from 'react-native';
 
+type CustomListProps = Omit<
+  FlatListProps<string | null>,
+  'data' | 'renderItem'
+>;
+
 export interface WheelPickerProps {
+  computeOpacity?: (x: number) => number;
   computeRotation?: (x: number) => number;
   computeScale?: (x: number) => number;
   containerProps?: Omit<ViewProps, 'style'>;
   containerStyle?: ViewStyle;
-  decelerationRate?: 'normal' | 'fast' | number;
-  flatListProps?: Omit<FlatListProps<string | null>, 'data' | 'renderItem'>;
   itemHeight?: number;
+  itemSelectedStyle?: StyleProp<ViewStyle>;
   itemStyle?: ViewStyle;
+  listProps?: CustomListProps;
   onChange: (index: number) => void;
-  opacityFunction?: (x: number) => number;
   options: any[];
   renderItem: (option: any, index: number) => React.ReactElement | null;
+  scrollDecelerationRate?: 'normal' | 'fast' | number;
   selectedIndex: number;
-  selectedIndicatorStyle?: StyleProp<ViewStyle>;
-  visibleRest?: number;
+  visibleItemsCount?: number;
 }

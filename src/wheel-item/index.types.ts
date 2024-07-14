@@ -5,9 +5,9 @@ export interface ItemProps {
   height: number;
   index: number;
   currentScrollIndex: Animated.AnimatedAddition<number>;
-  visibleRest: number;
+  visibleItemsCount: number;
   computeRotation: (x: number) => number;
-  opacityFunction: (x: number) => number;
+  computeOpacity: (x: number) => number;
   computeScale: (x: number) => number;
   children: React.ReactElement | null;
 }
