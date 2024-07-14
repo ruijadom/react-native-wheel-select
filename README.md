@@ -32,6 +32,10 @@ const [selected, setSelected] = useState(data[0]?.value || 0);
 />
 ```
 
+Here is an example of how the `Wheel` component works:
+
+![Wheel Component Example](./resources/lib-example.gif)
+
 ## Props
 
 The `Wheel` component accepts the following props:
