@@ -5,7 +5,6 @@ import {
   type NativeSyntheticEvent,
   View,
 } from 'react-native';
-import type { WheelPickerProps } from './index.types';
 import React, {
   useCallback,
   useEffect,
@@ -15,6 +14,7 @@ import React, {
 } from 'react';
 import WheelItem from '../wheel-item';
 import styles from './index.styles';
+import type { WheelPickerProps } from './index.types';
 
 const computeFunctions = {
   computeOpacity: (x: number) => Math.pow(1 / 3, x),
@@ -46,6 +46,7 @@ export const Wheel = ({
     () => (1 + visibleItemsCount * 2) * itemHeight,
     [visibleItemsCount, itemHeight]
   );
+
   const customOptions = useMemo(() => {
     const array: (any | null)[] = [...options];
     for (let i = 0; i < visibleItemsCount; i++) {
@@ -91,6 +92,17 @@ export const Wheel = ({
     }
   }, [selectedIndex, options]);
 
+  /**
+   * If selectedIndex is changed from outside (not via onChange) we need to scroll to the specified index.
+   * This ensures that what the user sees as selected in the picker always corresponds to the value state.
+   */
+  useEffect(() => {
+    flatListRef.current?.scrollToIndex({
+      index: selectedIndex,
+      animated: false,
+    });
+  }, [selectedIndex]);
+
   return (
     <View
       style={[styles.container, { height: containerHeight }, containerStyle]}
@@ -118,12 +130,7 @@ export const Wheel = ({
         onMomentumScrollEnd={handleMomentumScrollEnd}
         snapToOffsets={offsets}
         decelerationRate={scrollDecelerationRate}
-        onLayout={() => {
-          flatListRef.current?.scrollToIndex({
-            index: selectedIndex,
-            animated: false,
-          });
-        }}
+        initialScrollIndex={selectedIndex}
         getItemLayout={(_, index) => ({
           length: itemHeight,
           offset: itemHeight * index,
