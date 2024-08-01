@@ -1,6 +1,6 @@
 {
   "name": "react-native-wheel-select",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A customizable wheel selector component for React Native.",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
