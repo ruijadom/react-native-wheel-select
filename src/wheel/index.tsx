@@ -1,6 +1,7 @@
 import {
   Animated,
   FlatList,
+  type ListRenderItemInfo,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   View,
@@ -16,11 +17,17 @@ import WheelItem from '../wheel-item';
 import styles from './index.styles';
 import type { WheelPickerProps } from './index.types';
 
+// Wrap FlatList with Animated.createAnimatedComponent
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+
 const computeFunctions = {
   computeOpacity: (x: number) => Math.pow(1 / 3, x),
   computeRotation: (x: number) => 1 - Math.pow(1 / 2, x),
-  computeScale: (x: number) => 1.0 ** x,
+  computeScale: (x: number) => Math.pow(1, x), // Simplified for performance
 };
+
+// Memoized WheelItem to avoid unnecessary re-renders
+const MemoizedWheelItem = React.memo(WheelItem);
 
 export const Wheel = ({
   computeOpacity = computeFunctions.computeOpacity,
@@ -39,7 +46,7 @@ export const Wheel = ({
   selectedIndex,
   visibleItemsCount = 2,
 }: WheelPickerProps) => {
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<Animated.FlatList<string | null>>(null);
   const [scrollY] = useState(new Animated.Value(0));
 
   const containerHeight = useMemo(
@@ -48,7 +55,7 @@ export const Wheel = ({
   );
 
   const customOptions = useMemo(() => {
-    const array: (any | null)[] = [...options];
+    const array: (string | null)[] = [...options];
     for (let i = 0; i < visibleItemsCount; i++) {
       array.unshift(null);
       array.push(null);
@@ -84,24 +91,46 @@ export const Wheel = ({
     [itemHeight, options.length, selectedIndex, onChange]
   );
 
+  const renderWheelItem = useCallback(
+    ({ index, item }: ListRenderItemInfo<string | null>) => (
+      <MemoizedWheelItem
+        key={`option-${index}`}
+        index={index}
+        style={itemStyle}
+        height={itemHeight}
+        currentScrollIndex={currentScrollIndex}
+        computeRotation={computeRotation}
+        computeScale={computeScale}
+        computeOpacity={computeOpacity}
+        visibleItemsCount={visibleItemsCount}
+      >
+        {renderItem(item, index)}
+      </MemoizedWheelItem>
+    ),
+    [
+      itemStyle,
+      itemHeight,
+      currentScrollIndex,
+      computeRotation,
+      computeScale,
+      computeOpacity,
+      visibleItemsCount,
+      renderItem,
+    ]
+  );
+
   useEffect(() => {
     if (selectedIndex < 0 || selectedIndex >= options.length) {
       throw new Error(
         `Selected index ${selectedIndex} is out of bounds [0, ${options.length - 1}]`
       );
     }
-  }, [selectedIndex, options]);
 
-  /**
-   * If selectedIndex is changed from outside (not via onChange) we need to scroll to the specified index.
-   * This ensures that what the user sees as selected in the picker always corresponds to the value state.
-   */
-  useEffect(() => {
-    flatListRef.current?.scrollToIndex({
-      index: selectedIndex,
-      animated: false,
-    });
-  }, [selectedIndex]);
+    // Clean up animations or listeners when component unmounts
+    return () => {
+      scrollY.removeAllListeners(); // Ensure all listeners are removed
+    };
+  }, [selectedIndex, options, scrollY]);
 
   return (
     <View
@@ -118,19 +147,26 @@ export const Wheel = ({
           },
         ]}
       />
-      <FlatList<string | null>
+      <AnimatedFlatList
         {...listProps}
         ref={flatListRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        onScroll={(event) => {
-          const { y } = event.nativeEvent.contentOffset;
-          scrollY.setValue(y);
+        onLayout={() => {
+          flatListRef.current?.scrollToIndex({
+            index: selectedIndex,
+            animated: false,
+          });
         }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true } // Enable native driver
+        )}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         snapToOffsets={offsets}
         decelerationRate={scrollDecelerationRate}
         initialScrollIndex={selectedIndex}
+        renderItem={renderWheelItem}
         getItemLayout={(_, index) => ({
           length: itemHeight,
           offset: itemHeight * index,
@@ -138,21 +174,6 @@ export const Wheel = ({
         })}
         data={customOptions}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ index, item: option }) => (
-          <WheelItem
-            key={`option-${index}`}
-            index={index}
-            style={itemStyle}
-            height={itemHeight}
-            currentScrollIndex={currentScrollIndex}
-            computeRotation={computeRotation}
-            computeScale={computeScale}
-            computeOpacity={computeOpacity}
-            visibleItemsCount={visibleItemsCount}
-          >
-            {renderItem(option, index)}
-          </WheelItem>
-        )}
       />
     </View>
   );
