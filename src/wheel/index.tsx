@@ -1,6 +1,7 @@
 import {
   Animated,
   FlatList,
+  type ListRenderItem,
   type ListRenderItemInfo,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
@@ -149,6 +150,7 @@ export const Wheel = ({
       />
       <AnimatedFlatList
         {...listProps}
+        // @ts-ignore
         ref={flatListRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -166,7 +168,7 @@ export const Wheel = ({
         snapToOffsets={offsets}
         decelerationRate={scrollDecelerationRate}
         initialScrollIndex={selectedIndex}
-        renderItem={renderWheelItem}
+        renderItem={renderWheelItem as ListRenderItem<unknown>}
         getItemLayout={(_, index) => ({
           length: itemHeight,
           offset: itemHeight * index,
