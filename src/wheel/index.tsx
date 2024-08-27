@@ -1,7 +1,6 @@
 import {
   Animated,
   FlatList,
-  type ListRenderItem,
   type ListRenderItemInfo,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
@@ -16,10 +15,13 @@ import React, {
 } from 'react';
 import WheelItem from '../wheel-item';
 import styles from './index.styles';
+import type { ListRenderItem } from 'react-native';
 import type { WheelPickerProps } from './index.types';
 
 // Wrap FlatList with Animated.createAnimatedComponent
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+const AnimatedFlatList = Animated.createAnimatedComponent(
+  FlatList as new () => FlatList<string | null>
+);
 
 const computeFunctions = {
   computeOpacity: (x: number) => Math.pow(1 / 3, x),
@@ -123,7 +125,9 @@ export const Wheel = ({
   useEffect(() => {
     if (selectedIndex < 0 || selectedIndex >= options.length) {
       throw new Error(
-        `Selected index ${selectedIndex} is out of bounds [0, ${options.length - 1}]`
+        `Selected index ${selectedIndex} is out of bounds [0, ${
+          options.length - 1
+        }]`
       );
     }
 
@@ -168,14 +172,16 @@ export const Wheel = ({
         snapToOffsets={offsets}
         decelerationRate={scrollDecelerationRate}
         initialScrollIndex={selectedIndex}
-        renderItem={renderWheelItem as ListRenderItem<unknown>}
-        getItemLayout={(_, index) => ({
+        renderItem={renderWheelItem as ListRenderItem<string | null>}
+        getItemLayout={(_: any, index: number) => ({
           length: itemHeight,
           offset: itemHeight * index,
           index,
         })}
         data={customOptions}
-        keyExtractor={(_, index) => index.toString()}
+        keyExtractor={(_: any, index: { toString: () => any }) =>
+          index.toString()
+        }
       />
     </View>
   );
