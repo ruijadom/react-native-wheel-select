@@ -10,26 +10,23 @@ npm install react-native-wheel-select
 
 ## Usage
 
-```js
+```tsx
 import { Wheel } from 'react-native-wheel-select';
 
-const data = [...Array(100).keys()].map((index) => ({
-  value: index,
-  label: index.toString(),
-}));
+const data = [...Array(100).keys()].map((index) => index.toString());
 
-const [selected, setSelected] = useState(data[0]?.value || 0);
+const [selected, setSelected] = useState(0);
 
 <Wheel
   options={data}
   selectedIndex={selected}
-  onChange={(value: React.SetStateAction<number>) => setSelected(value)}
+  onChange={(index: number) => setSelected(index)}
   itemHeight={42}
   visibleItemsCount={1}
-  renderItem={(item: Item) => {
-    return <Text>{item?.value}</Text>;
+  renderItem={(item, index) => {
+    return <Text>{item}</Text>;
   }}
-/>
+/>;
 ```
 
 Here is an example of how the `Wheel` component works:
@@ -40,21 +37,16 @@ Here is an example of how the `Wheel` component works:
 
 The `Wheel` component accepts the following props:
 
-- **computeOpacity**: Function to determine the opacity of items.
-- **computeRotation**: Function to determine the rotation of items.
-- **computeScale**: Function to determine the scale of items.
-- **containerProps**: Additional props for the container.
-- **containerStyle**: Style for the container.
-- **itemHeight**: Height of each item in the wheel.
-- **itemSelectedStyle**: Style for the selected indicator.
-- **itemStyle**: Style for each item.
-- **listProps**: Additional props for the FlatList.
-- **onChange**: Callback function called when the selected item changes.
 - **options**: Array of options to be displayed in the wheel.
-- **renderItem**: Function to render each item.
-- **scrollDecelerationRate**: The rate at which the wheel decelerates.
 - **selectedIndex**: Index of the selected item.
-- **visibleItemsCount**: Number of items visible on either side of the selected item.
+- **onChange**: Callback function that receives the selected index when it changes.
+- **renderItem**: Function to render each item, receives the option and index as parameters.
+- **itemHeight**: Height of each item in the wheel (optional).
+- **visibleItemsCount**: Number of items visible on either side of the selected item (optional).
+- **containerProps**: Additional props for the container (excluding style).
+- **containerStyle**: Style object for the container.
+- **itemSelectedStyle**: Style for the selected item indicator.
+- **listProps**: Additional props for the underlying FlatList (excluding data and renderItem).
 
 ## Contributing
 
