@@ -79,6 +79,10 @@ export const Wheel = ({
   );
 
   useEffect(() => {
+    if (options.length === 0) {
+      return; // Don't validate if there are no options
+    }
+
     if (selectedIndex < 0 || selectedIndex >= options.length) {
       throw new Error(
         `Selected index ${selectedIndex} is out of bounds [0, ${options.length - 1}]`
